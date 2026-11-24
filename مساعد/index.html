@@ -1,0 +1,2330 @@
+;
+        ::-webkit-scrollbar {
+            width: 8px;<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="رفيقي الذكي: تطبيق متكامل لطلاب الإعدادية والثانوية والبكالوريا لإدارة الميزانية، الحصص، المذاكرة، التقويم، المفكرة، المنبه والتيمر، ومنصة SPRIX.">
+    <meta property="og:title" content="رفيقي الذكي — ميزانية وحصص ومذاكرة الطالب">
+    <meta property="og:description" content="منصة شخصية لتنظيم الميزانية والمصروفات، جدول الحصص، خطة المذاكرة والمراجعات، التقويم والمفكرة، والمنبه والتيمر.">
+    <meta property="og:type" content="website">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%234f46e5'/%3E%3Cpath d='M32 16L12 26l20 10 16-8v14h4V26L32 16zm-12 18v10c0 5.5 5.4 10 12 10s12-4.5 12-10V34l-12 6-12-6z' fill='%23ffffff'/%3E%3C/svg%3E">
+    <title>رفيقي الذكي — ميزانية وحصص ومذاكرة الطالب</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at top right, #1e1b4b 0%, #090d16 50%, #05070e 100%);
+            color: #f8fafc;
+            min-height: 100vh
+            overflow-x: hidden;
+        }
+        .glass {
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(148, 163, 184, 0.14);
+        }
+        .glass-subtle {
+            background: rgba(30, 41, 59, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.45);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.75);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
+
+    <!-- شاشة تسجيل الدخول الاحترافية بطلب اسم الطالب -->
+    <div id="student-login-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6 bg-slate-950/85 backdrop-blur-xl transition-opacity duration-300">
+        <div class="relative w-full max-w-lg glass rounded-3xl p-6 sm:p-8 shadow-2xl border border-indigo-400/25 overflow-hidden">
+            <div class="pointer-events-none absolute -top-24 -right-24 w-56 h-56 rounded-full bg-indigo-500/20 blur-3xl"></div>
+            <div class="pointer-events-none absolute -bottom-24 -left-24 w-56 h-56 rounded-full bg-purple-500/20 blur-3xl"></div>
+
+            <div class="relative z-10">
+                <div class="flex items-center justify-between gap-2 mb-5">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-400/25 text-[11px] font-extrabold text-indigo-300">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span>بوابة الطالب الذكية • 2026/2027</span>
+                    </span>
+                    <span id="login-stage-badge" class="text-[11px] font-bold text-slate-400">المرحلة الثانوية</span>
+                </div>
+
+                <div class="flex items-center gap-4 mb-5">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-indigo-950/60 shrink-0">
+                        <i data-lucide="graduation-cap" class="w-7 h-7 text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight">أهلاً بك في رفيقي الذكي</h2>
+                        <p class="text-xs sm:text-sm text-slate-300 mt-1">سجّل اسمك واختر مرحلتك وعدد موادك لتهيئة اللوحة ومنصة SPRIX.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2.5 mb-5">
+                    <div class="p-2.5 rounded-2xl glass-subtle text-center">
+                        <p class="text-[11px] text-slate-400 font-bold">المرحلة</p>
+                        <p id="login-stage-card" class="text-xs font-black text-indigo-300 mt-0.5">المرحلة الثانوية</p>
+                    </div>
+                    <div class="p-2.5 rounded-2xl glass-subtle text-center">
+                        <p class="text-[11px] text-slate-400 font-bold">عدد المواد</p>
+                        <p id="login-subjects-count" class="text-xs font-black text-purple-300 mt-0.5 tabular-nums">6 مواد</p>
+                    </div>
+                    <div class="p-2.5 rounded-2xl glass-subtle text-center">
+                        <p class="text-[11px] text-slate-400 font-bold">المنصة</p>
+                        <p class="text-xs font-black text-emerald-300 mt-0.5">SPRIX</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    <div>
+                        <label for="login-stage-select" class="block text-xs font-extrabold text-slate-200 mb-1.5">المرحلة الدراسية</label>
+                        <select id="login-stage-select" onchange="onStageSelectionChange(this.value, 'login')" class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700/80 focus:border-indigo-400 focus:outline-none text-xs sm:text-sm font-bold text-white">
+                            <option value="المرحلة الإعدادية">المرحلة الإعدادية</option>
+                            <option value="المرحلة الثانوية">المرحلة الثانوية</option>
+                            <option value="البكالوريا">البكالوريا</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="login-subjects-count-input" class="block text-xs font-extrabold text-slate-200 mb-1.5">عدد المواد (اختياري)</label>
+                        <input id="login-subjects-count-input" type="number" min="1" max="20" onchange="onSubjectsCountChange(this.value, 'login')" class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700/80 focus:border-indigo-400 focus:outline-none text-xs sm:text-sm font-bold text-white tabular-nums">
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <label for="login-student-name-input" class="block text-xs sm:text-sm font-extrabold text-slate-200">اسم الطالب</label>
+                        <span class="text-[11px] text-slate-400">اضغط Enter للدخول</span>
+                    </div>
+                    <div class="relative">
+                        <span class="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-indigo-300">
+                            <i data-lucide="user-check" class="w-4 h-4"></i>
+                        </span>
+                        <input id="login-student-name-input" type="text" placeholder="اكتب اسمك الكامل هنا (مثال: محمد أيمن)" class="w-full pr-10 pl-4 py-3.5 rounded-2xl bg-slate-900/90 border border-slate-700/80 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/25 focus:outline-none text-sm sm:text-base font-bold text-white placeholder:text-slate-500 transition">
+                    </div>
+                    <p id="login-error-msg" class="text-xs text-rose-400 font-bold hidden">من فضلك اكتب اسم الطالب أولاً للمتابعة.</p>
+
+                    <div class="flex items-center justify-between pt-1">
+                        <span class="text-[11px] text-slate-400">اسم مقترح:</span>
+                        <button type="button" onclick="fillSuggestedStudentName('محمد أيمن')" class="px-2.5 py-1 rounded-xl bg-slate-800/80 hover:bg-indigo-500/20 border border-slate-700/70 hover:border-indigo-400/40 text-xs font-extrabold text-indigo-300 transition cursor-pointer">
+                            استخدام: محمد أيمن
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex flex-col sm:flex-row items-center gap-3">
+                    <button type="button" onclick="submitStudentLogin()" class="w-full sm:flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 hover:from-indigo-500 hover:to-fuchsia-500 text-white font-black text-sm shadow-lg shadow-indigo-950/60 flex items-center justify-center gap-2 transition cursor-pointer">
+                        <span>دخول إلى لوحة التحكم</span>
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <div class="mt-4 pt-3.5 border-t border-slate-800/80 flex items-center justify-center gap-2 text-[11px] text-slate-400">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                    <span>يتم حفظ اسمك وبياناتك تلقائياً على جهازك في المتصفح</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- شريط التنبيهات الفورية -->
+    <div id="toast-container" class="fixed bottom-5 left-5 z-40 flex flex-col gap-2 max-w-sm"></div>
+
+    <!-- الحاوية الرئيسية -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- الترويسة العلوية -->
+        <header class="glass rounded-3xl p-4 sm:p-6 shadow-xl">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div class="flex items-start sm:items-center gap-4">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shrink-0">
+                        <i data-lucide="compass" class="w-6 h-6 sm:w-7 sm:h-7 text-white"></i>
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h1 id="header-student-greeting" class="text-lg sm:text-2xl font-black text-white">مرحباً بك يا محمد أيمن</h1>
+                            <span id="header-stage-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-indigo-500/20 text-indigo-300 border border-indigo-400/25">المرحلة الثانوية • 2026/2027</span>
+                            <span id="network-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-500/15 text-emerald-300 border border-emerald-400/25">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                <span>متصل بالنت</span>
+                            </span>
+                        </div>
+                        <p id="header-live-clock" class="text-xs sm:text-sm text-slate-400 mt-1 tabular-nums">جاري تحميل التاريخ والوقت...</p>
+                    </div>
+                </div>
+
+                <!-- أزرار سريعة -->
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <a href="https://sprixportal.jp/" target="_blank" rel="noopener noreferrer" aria-label="فتح منصة SPRIX" class="px-3.5 py-2.5 rounded-2xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400/30 text-emerald-300 text-xs font-extrabold flex items-center gap-2 transition">
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                        <span>منصة SPRIX</span>
+                    </a>
+                    <button type="button" onclick="testSoundAlert()" aria-label="اختبار صوت التنبيه" class="px-3.5 py-2.5 rounded-2xl glass-subtle hover:bg-slate-800 text-slate-200 text-xs font-bold flex items-center gap-2 transition cursor-pointer">
+                        <i data-lucide="volume-2" class="w-4 h-4 text-indigo-400"></i>
+                        <span>اختبار الصوت</span>
+                    </button>
+                    <button type="button" onclick="openStudentLoginModal()" aria-label="تغيير بيانات الطالب" class="px-3.5 py-2.5 rounded-2xl glass-subtle hover:bg-slate-800 text-slate-200 text-xs font-bold flex items-center gap-2 transition cursor-pointer">
+                        <i data-lucide="user-cog" class="w-4 h-4 text-purple-400"></i>
+                        <span>تغيير الطالب</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- شريط التنقل بين الأقسام -->
+            <nav class="mt-5 pt-4 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto pb-1">
+                <button type="button" data-tab="dashboard" onclick="switchTab('dashboard')" class="nav-tab px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 whitespace-nowrap transition cursor-pointer bg-indigo-600 text-white shadow-lg shadow-indigo-950/50">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>لوحة التحكم والميزانية</span>
+                </button>
+                <button type="button" data-tab="schedule" onclick="switchTab('schedule')" class="nav-tab px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 whitespace-nowrap transition cursor-pointer text-slate-300 hover:bg-slate-800/70">
+                    <i data-lucide="calendar-clock" class="w-4 h-4"></i>
+                    <span>الحصص والمذاكرة والامتحانات</span>
+                </button>
+                <button type="button" data-tab="calendar" onclick="switchTab('calendar')" class="nav-tab px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 whitespace-nowrap transition cursor-pointer text-slate-300 hover:bg-slate-800/70">
+                    <i data-lucide="calendar-days" class="w-4 h-4"></i>
+                    <span>التقويم والمفكرة</span>
+                </button>
+                <button type="button" data-tab="clocktools" onclick="switchTab('clocktools')" class="nav-tab px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 whitespace-nowrap transition cursor-pointer text-slate-300 hover:bg-slate-800/70">
+                    <i data-lucide="alarm-clock" class="w-4 h-4"></i>
+                    <span>المنبه والتيمر والمواقيت</span>
+                </button>
+                <button type="button" data-tab="assistant" onclick="switchTab('assistant')" class="nav-tab px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 whitespace-nowrap transition cursor-pointer text-slate-300 hover:bg-slate-800/70">
+                    <i data-lucide="bot" class="w-4 h-4"></i>
+                    <span>المساعد الذكي</span>
+                </button>
+                <button type="button" data-tab="controls" onclick="switchTab('controls')" class="nav-tab px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 whitespace-nowrap transition cursor-pointer text-slate-300 hover:bg-slate-800/70">
+                    <i data-lucide="sliders" class="w-4 h-4"></i>
+                    <span>المواد والتحكم الكامل</span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- القسم الأول: لوحة التحكم والميزانية -->
+        <section id="tab-dashboard" class="tab-panel space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                <div class="glass rounded-3xl p-5 border-r-4 border-r-indigo-500">
+                    <div class="flex items-center justify-between text-slate-400 text-xs font-bold">
+                        <span>الرصيد المتاح حالياً</span>
+                        <i data-lucide="wallet" class="w-4 h-4 text-indigo-400"></i>
+                    </div>
+                    <p id="stat-balance" class="text-2xl sm:text-3xl font-black text-white mt-2 tabular-nums">0.00 ج.م</p>
+                    <p id="stat-budget-status" class="text-xs text-slate-400 mt-2">مرتبط بإجمالي الدخل والمصروفات</p>
+                </div>
+
+                <div class="glass rounded-3xl p-5 border-r-4 border-r-emerald-500">
+                    <div class="flex items-center justify-between text-slate-400 text-xs font-bold">
+                        <span>إجمالي الدخل</span>
+                        <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
+                    </div>
+                    <p id="stat-income" class="text-2xl sm:text-3xl font-black text-emerald-400 mt-2 tabular-nums">0.00 ج.م</p>
+                    <p class="text-xs text-slate-400 mt-2">مصروف جيب أو مكافآت أو دعم</p>
+                </div>
+
+                <div class="glass rounded-3xl p-5 border-r-4 border-r-rose-500">
+                    <div class="flex items-center justify-between text-slate-400 text-xs font-bold">
+                        <span>إجمالي المصروفات</span>
+                        <i data-lucide="trending-down" class="w-4 h-4 text-rose-400"></i>
+                    </div>
+                    <p id="stat-expense" class="text-2xl sm:text-3xl font-black text-rose-400 mt-2 tabular-nums">0.00 ج.م</p>
+                    <p class="text-xs text-slate-400 mt-2">مواصلات، كتب، منصة، وطعام</p>
+                </div>
+
+                <div class="glass rounded-3xl p-5 border-r-4 border-r-purple-500">
+                    <div class="flex items-center justify-between text-slate-400 text-xs font-bold">
+                        <span>إنجاز المذاكرة</span>
+                        <i data-lucide="check-circle-2" class="w-4 h-4 text-purple-400"></i>
+                    </div>
+                    <p id="stat-study-progress" class="text-2xl sm:text-3xl font-black text-purple-300 mt-2 tabular-nums">0%</p>
+                    <p id="stat-study-counts" class="text-xs text-slate-400 mt-2">0 من 0 مهام مكتملة</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-4 glass rounded-3xl p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-black text-white flex items-center gap-2">
+                            <i data-lucide="plus-circle" class="w-5 h-5 text-indigo-400"></i>
+                            <span>إضافة معاملة مالية</span>
+                        </h2>
+                        <span class="text-[11px] font-bold text-slate-400">فوري</span>
+                    </div>
+
+                    <form id="transaction-form" onsubmit="handleAddTransaction(event)" class="space-y-3.5">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" id="tx-type-expense" onclick="setTxType('expense')" class="py-2.5 rounded-2xl text-xs font-black border transition cursor-pointer bg-rose-500/20 border-rose-400/40 text-rose-300">
+                                مصروف (-)
+                            </button>
+                            <button type="button" id="tx-type-income" onclick="setTxType('income')" class="py-2.5 rounded-2xl text-xs font-black border transition cursor-pointer bg-slate-800/60 border-slate-700 text-slate-300">
+                                دخل (+)
+                            </button>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">المبلغ (ج.م)</label>
+                            <input id="tx-amount" type="number" step="0.01" min="0.01" required placeholder="مثال: 50" class="w-full px-4 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-indigo-400 focus:outline-none text-sm font-bold text-white tabular-nums">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">الوصف</label>
+                            <input id="tx-desc" type="text" required placeholder="مثال: مواصلات أو ملخص برمجة" class="w-full px-4 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-indigo-400 focus:outline-none text-sm font-bold text-white">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">التصنيف</label>
+                                <select id="tx-category" class="w-full px-3 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-indigo-400 focus:outline-none text-xs font-bold text-white">
+                                    <option value="مواصلات">مواصلات</option>
+                                    <option value="طعام ومشروبات">طعام ومشروبات</option>
+                                    <option value="كتب ومنصات">كتب ومنصات</option>
+                                    <option value="مصروف جيب">مصروف جيب</option>
+                                    <option value="أخرى">أخرى</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">التاريخ</label>
+                                <input id="tx-date" type="date" required class="w-full px-3 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-indigo-400 focus:outline-none text-xs font-bold text-white tabular-nums">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-sm shadow-lg transition cursor-pointer">
+                            حفظ المعاملة
+                        </button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-8 glass rounded-3xl p-6 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <h2 class="text-lg font-black text-white flex items-center gap-2">
+                            <i data-lucide="receipt" class="w-5 h-5 text-emerald-400"></i>
+                            <span>سجل المعاملات المالية</span>
+                        </h2>
+
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" onclick="setTxFilter('all')" data-tx-filter="all" class="tx-filter-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-indigo-600 text-white cursor-pointer">الكل</button>
+                            <button type="button" onclick="setTxFilter('income')" data-tx-filter="income" class="tx-filter-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer">الدخل</button>
+                            <button type="button" onclick="setTxFilter('expense')" data-tx-filter="expense" class="tx-filter-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer">المصروفات</button>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute right-3.5 top-3"></i>
+                        <input id="tx-search-input" type="text" oninput="renderTransactions()" placeholder="ابحث في المعاملات بالوصف أو التصنيف أو التاريخ..." class="w-full pr-10 pl-4 py-2.5 rounded-2xl bg-slate-900/80 border border-slate-700/80 focus:border-indigo-400 focus:outline-none text-xs sm:text-sm text-white">
+                    </div>
+
+                    <div id="transactions-list" class="space-y-2.5 max-h-96 overflow-y-auto pr-1"></div>
+                </div>
+            </div>
+
+            <div class="glass rounded-3xl p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-black text-white flex items-center gap-2">
+                        <i data-lucide="bar-chart-3" class="w-5 h-5 text-purple-400"></i>
+                        <span>تقدم المذاكرة في موادك الدراسية</span>
+                    </h2>
+                    <span class="text-xs text-slate-400">مرتبط بمهام المذاكرة</span>
+                </div>
+                <div id="subjects-progress-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- القسم الثاني: الحصص والمذاكرة ومُرتّب جدول الامتحانات -->
+        <section id="tab-schedule" class="tab-panel hidden space-y-6">
+            <div class="glass rounded-3xl p-6 border border-indigo-400/20 space-y-5">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                    <div>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-400/25 text-[11px] font-extrabold text-purple-300">
+                            <i data-lucide="calendar-check" class="w-3.5 h-3.5"></i>
+                            <span>مُرتّب المذاكرة والمراجعات الذكي • العام 2026/2027</span>
+                        </span>
+                        <h2 class="text-xl font-black text-white mt-2">موعد الامتحان وترتيب جدول المذاكرة</h2>
+                        <p class="text-xs sm:text-sm text-slate-300 mt-1">اختر موعداً رسمياً مؤكداً أو حدد تاريخ امتحانك ثم رتّب جلسات المذاكرة والمراجعات تلقائياً.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="applyPresetExamDate('2027-01-09', 'امتحانات نصف العام للثانوي (9 يناير 2027)')" class="px-3 py-2 rounded-2xl bg-slate-800/90 hover:bg-indigo-500/20 border border-slate-700 text-xs font-bold text-indigo-200 transition cursor-pointer">
+                            نصف العام: 9 يناير 2027
+                        </button>
+                        <button type="button" onclick="applyPresetExamDate('2027-06-12', 'امتحانات الدور الأول للصف الثاني بكالوريا (12 يونيو 2027)')" class="px-3 py-2 rounded-2xl bg-slate-800/90 hover:bg-purple-500/20 border border-slate-700 text-xs font-bold text-purple-200 transition cursor-pointer">
+                            البكالوريا: 12 يونيو 2027
+                        </button>
+                        <span id="exam-days-remaining-pill" class="px-3 py-2 rounded-2xl bg-emerald-500/15 border border-emerald-400/30 text-xs font-black text-emerald-300 tabular-nums">
+                            المتبقي: -- يوم
+                        </span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                    <div class="md:col-span-4">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">اسم أو نوع الامتحان</label>
+                        <input id="exam-title-input" type="text" value="امتحانات الدور الأول للصف الثاني بكالوريا" class="w-full px-4 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-indigo-400 focus:outline-none text-xs sm:text-sm font-bold text-white">
+                    </div>
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">تاريخ الامتحان (مستقبلي)</label>
+                        <input id="exam-date-input" type="date" value="2027-06-12" oninput="updateExamCountdownBadge()" class="w-full px-4 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-indigo-400 focus:outline-none text-xs sm:text-sm font-bold text-white tabular-nums">
+                    </div>
+                    <div class="md:col-span-5 flex flex-wrap gap-2">
+                        <button type="button" onclick="searchOfficialExamDate()" class="flex-1 py-2.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-indigo-400/30 text-indigo-200 text-xs font-extrabold flex items-center justify-center gap-1.5 transition cursor-pointer">
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                            <span>المواعيد المعتمدة</span>
+                        </button>
+                        <button type="button" onclick="generateStudyReviewPlan()" class="flex-1 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-black flex items-center justify-center gap-1.5 shadow-lg transition cursor-pointer">
+                            <i data-lucide="list-ordered" class="w-4 h-4"></i>
+                            <span>ترتيب الجدول وإضافته</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="exam-search-result" class="hidden p-4 rounded-2xl glass-subtle border border-indigo-400/20 text-xs sm:text-sm text-slate-200 leading-relaxed"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-6 glass rounded-3xl p-6 space-y-4">
+                    <h2 class="text-lg font-black text-white flex items-center gap-2">
+                        <i data-lucide="calendar" class="w-5 h-5 text-indigo-400"></i>
+                        <span>جدول الحصص الدراسية</span>
+                    </h2>
+
+                    <form onsubmit="handleAddLesson(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <select id="lesson-subject" class="subject-select px-3 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs font-bold text-white"></select>
+                        <input id="lesson-day" type="text" required placeholder="اليوم (مثال: السبت)" class="px-3 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs font-bold text-white">
+                        <input id="lesson-time" type="time" required class="px-3 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs font-bold text-white tabular-nums">
+                        <input id="lesson-notes" type="text" placeholder="ملاحظة أو رابط/منصة" class="px-3 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs font-bold text-white">
+                        <button type="submit" class="sm:col-span-2 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black transition cursor-pointer">
+                            إضافة حصة دراسية
+                        </button>
+                    </form>
+
+                    <div id="lessons-subject-filters" class="flex flex-wrap gap-1.5 pt-1"></div>
+                    <div id="lessons-list" class="space-y-2.5 max-h-80 overflow-y-auto pr-1"></div>
+                </div>
+
+                <div class="lg:col-span-6 glass rounded-3xl p-6 space-y-4">
+                    <h2 class="text-lg font-black text-white flex items-center gap-2">
+                        <i data-lucide="book-open" class="w-5 h-5 text-purple-400"></i>
+                        <span>مهام المذاكرة والمراجعات والتنبيهات</span>
+                    </h2>
+
+                    <form onsubmit="handleAddTask(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <select id="task-subject" class="subject-select px-3 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs font-bold text-white"></select>
+                        <input id="task-title" type="text" required placeholder="عنوان المذاكرة أو المراجعة" class="px-3 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs font-bold text-white">
+                        <input id="task-date" type="date" required class="px-3 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs font-bold text-white tabular-nums">
+                        <input id="task-reminder" type="time" placeholder="تنبيه صوتي" class="px-3 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs font-bold text-white tabular-nums">
+                        <button type="submit" class="sm:col-span-2 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-black transition cursor-pointer">
+                            إضافة مهمة مذاكرة
+                        </button>
+                    </form>
+
+                    <div id="tasks-subject-filters" class="flex flex-wrap gap-1.5 pt-1"></div>
+                    <div id="tasks-list" class="space-y-2.5 max-h-80 overflow-y-auto pr-1"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم التقويم والمفكرة اليومية -->
+        <section id="tab-calendar" class="tab-panel hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-7 glass rounded-3xl p-6 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-lg font-black text-white flex items-center gap-2">
+                                <i data-lucide="calendar-days" class="w-5 h-5 text-indigo-400"></i>
+                                <span>التقويم الدراسي التفاعلي</span>
+                            </h2>
+                            <p class="text-xs text-slate-400 mt-0.5">اضغط على أي يوم لعرض مهام وملاحظات اليوم وإضافتها.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="changeCalendarMonth(-1)" aria-label="الشهر السابق" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer" title="الشهر السابق">
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            </button>
+                            <span id="calendar-month-label" class="px-3 py-1.5 rounded-xl glass-subtle text-xs sm:text-sm font-black text-indigo-300 tabular-nums">نوفمبر 2026</span>
+                            <button type="button" onclick="changeCalendarMonth(1)" aria-label="الشهر التالي" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer" title="الشهر التالي">
+                                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                            </button>
+                            <button type="button" onclick="jumpCalendarToToday()" aria-label="الانتقال إلى تاريخ اليوم" class="px-3 py-1.5 rounded-xl bg-indigo-600/25 hover:bg-indigo-600/40 border border-indigo-400/30 text-xs font-extrabold text-indigo-200 transition cursor-pointer">
+                                اليوم
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-7 gap-1.5 text-center text-[11px] font-extrabold text-slate-400">
+                        <div>السبت</div>
+                        <div>الأحد</div>
+                        <div>الإثنين</div>
+                        <div>الثلاثاء</div>
+                        <div>الأربعاء</div>
+                        <div>الخميس</div>
+                        <div>الجمعة</div>
+                    </div>
+
+                    <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5"></div>
+
+                    <div class="pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-4 text-[11px] text-slate-400">
+                        <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> اليوم المحدد</span>
+                        <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span> مهام مذاكرة</span>
+                        <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> ملاحظات المفكرة</span>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 glass rounded-3xl p-6 space-y-4">
+                    <div class="flex items-center justify-between gap-2">
+                        <div>
+                            <h2 class="text-lg font-black text-white flex items-center gap-2">
+                                <i data-lucide="notebook-pen" class="w-5 h-5 text-emerald-400"></i>
+                                <span>المفكرة اليومية</span>
+                            </h2>
+                            <p id="selected-calendar-date-label" class="text-xs font-bold text-indigo-300 mt-0.5 tabular-nums">التاريخ المحدد: اليوم</p>
+                        </div>
+                        <span id="calendar-day-items-count" class="px-2.5 py-1 rounded-xl glass-subtle text-[11px] font-extrabold text-slate-300 tabular-nums">0 عناصر</span>
+                    </div>
+
+                    <form onsubmit="handleAddNotebookNote(event)" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <input id="note-date-input" type="date" onchange="selectCalendarDate(this.value)" class="px-3.5 py-2 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs font-bold text-white tabular-nums">
+                            <select id="note-subject-select" class="subject-select px-3.5 py-2 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs font-bold text-white"></select>
+                        </div>
+                        <input id="note-title-input" type="text" required placeholder="عنوان الملاحظة أو الفكرة..." class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-indigo-400 focus:outline-none text-xs sm:text-sm font-bold text-white">
+                        <textarea id="note-content-input" rows="3" placeholder="اكتب تفاصيل المفكرة أو ملخص اليوم أو ملاحظات منصة SPRIX..." class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-indigo-400 focus:outline-none text-xs sm:text-sm text-white resize-none"></textarea>
+                        <button type="submit" class="w-full py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-black transition cursor-pointer">
+                            حفظ في المفكرة
+                        </button>
+                    </form>
+
+                    <div class="space-y-2 pt-2 border-t border-slate-800/80">
+                        <p class="text-xs font-extrabold text-slate-300">مهام المذاكرة في هذا اليوم</p>
+                        <div id="calendar-day-tasks" class="space-y-1.5"></div>
+                    </div>
+
+                    <div class="space-y-2 pt-2 border-t border-slate-800/80">
+                        <div class="flex items-center justify-between gap-2">
+                            <p class="text-xs font-extrabold text-slate-300">ملاحظات المفكرة</p>
+                            <input id="notes-search-input" type="text" oninput="renderNotebookNotes()" placeholder="بحث في المفكرة..." class="px-3 py-1 rounded-xl bg-slate-900/90 border border-slate-700 text-[11px] text-white focus:border-indigo-400 focus:outline-none">
+                        </div>
+                        <div id="notebook-notes-list" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم المنبه والتيمر والمواقيت -->
+        <section id="tab-clocktools" class="tab-panel hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="glass rounded-3xl p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-black text-white flex items-center gap-2">
+                            <i data-lucide="alarm-clock" class="w-5 h-5 text-amber-400"></i>
+                            <span>المنبه</span>
+                        </h2>
+                        <span class="text-[11px] font-bold text-slate-400">تنبيه صوتي</span>
+                    </div>
+
+                    <form onsubmit="handleAddAlarm(event)" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">وقت المنبه</label>
+                                <input id="alarm-time-input" type="time" required class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs sm:text-sm font-bold text-white tabular-nums">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">تسمية المنبه</label>
+                                <input id="alarm-label-input" type="text" placeholder="مثال: مذاكرة برمجة" class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs sm:text-sm font-bold text-white">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-black transition cursor-pointer">
+                            إضافة منبه
+                        </button>
+                    </form>
+
+                    <div id="alarms-list" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+                </div>
+
+                <div class="glass rounded-3xl p-6 space-y-4 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg font-black text-white flex items-center gap-2">
+                                <i data-lucide="hourglass" class="w-5 h-5 text-indigo-400"></i>
+                                <span>التيمر (العد التنازلي)</span>
+                            </h2>
+                            <span class="text-[11px] font-bold text-indigo-300">جلسات مذاكرة</span>
+                        </div>
+
+                        <div class="p-5 rounded-2xl glass-subtle text-center space-y-2">
+                            <p id="countdown-display" class="text-4xl sm:text-5xl font-black text-white tabular-nums tracking-wider">25:00</p>
+                            <p id="countdown-status-text" class="text-xs font-bold text-slate-400">جاهز للبدء</p>
+                        </div>
+
+                        <div class="flex flex-wrap gap-1.5 justify-center">
+                            <button type="button" onclick="setCountdownPreset(25)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-xs font-extrabold text-indigo-200 transition cursor-pointer">25 د</button>
+                            <button type="button" onclick="setCountdownPreset(45)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-xs font-extrabold text-indigo-200 transition cursor-pointer">45 د</button>
+                            <button type="button" onclick="setCountdownPreset(60)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-xs font-extrabold text-indigo-200 transition cursor-pointer">60 د</button>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-300 mb-1">دقائق</label>
+                                <input id="timer-minutes-input" type="number" min="0" max="300" value="25" onchange="applyCustomCountdownInput()" class="w-full px-3 py-2 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs font-bold text-white tabular-nums">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-300 mb-1">ثواني</label>
+                                <input id="timer-seconds-input" type="number" min="0" max="59" value="0" onchange="applyCustomCountdownInput()" class="w-full px-3 py-2 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs font-bold text-white tabular-nums">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5 pt-2">
+                        <button type="button" id="countdown-toggle-btn" onclick="toggleCountdownTimer()" class="py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black transition cursor-pointer">
+                            بدء التيمر
+                        </button>
+                        <button type="button" onclick="resetCountdownTimer()" class="py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-black transition cursor-pointer">
+                            إعادة ضبط
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass rounded-3xl p-6 space-y-4 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg font-black text-white flex items-center gap-2">
+                                <i data-lucide="timer" class="w-5 h-5 text-emerald-400"></i>
+                                <span>المواقيت وساعة الإيقاف</span>
+                            </h2>
+                            <span class="text-[11px] font-bold text-emerald-300">تسجيل المواقيت</span>
+                        </div>
+
+                        <div class="p-5 rounded-2xl glass-subtle text-center">
+                            <p id="stopwatch-display" class="text-3xl sm:text-4xl font-black text-emerald-300 tabular-nums">00:00:00.0</p>
+                            <p class="text-xs text-slate-400 mt-1">احسب زمن حل الأسئلة أو الجولات</p>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" id="stopwatch-toggle-btn" onclick="toggleStopwatch()" class="py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black transition cursor-pointer">
+                                بدء
+                            </button>
+                            <button type="button" onclick="recordStopwatchLap()" class="py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-indigo-200 text-xs font-black transition cursor-pointer">
+                                تسجيل ميقات
+                            </button>
+                            <button type="button" onclick="resetStopwatch()" class="py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-black transition cursor-pointer">
+                                تصفير
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="stopwatch-laps-list" class="space-y-1.5 max-h-52 overflow-y-auto pr-1 pt-2 border-t border-slate-800/80"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- القسم الثالث: المساعد الذكي المحلي -->
+        <section id="tab-assistant" class="tab-panel hidden">
+            <div class="glass rounded-3xl p-6 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-800/80 pb-4">
+                    <div>
+                        <h2 class="text-xl font-black text-white flex items-center gap-2">
+                            <i data-lucide="bot" class="w-6 h-6 text-indigo-400"></i>
+                            <span>المساعد الذكي (وضع التحليل المحلي)</span>
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-400 mt-1">يحلل موادك وميزانيتك ومهامك المسجلة محلياً مع المواعيد الرسمية المعتمدة للعام الدراسي 2026/2027.</p>
+                    </div>
+                    <span class="px-3 py-1.5 rounded-2xl glass-subtle text-xs font-extrabold text-emerald-300">يعمل محلياً بدون مفتاح API</span>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="sendQuickPrompt('رتب لي خطة مذاكرة أسبوعية لموادي الحالية.')" class="px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-indigo-500/20 border border-slate-700 text-xs font-bold text-indigo-200 transition cursor-pointer">
+                        خطة مذاكرة لموادي
+                    </button>
+                    <button type="button" onclick="sendQuickPrompt('ما هي المواعيد الرسمية المعتمدة للعام الدراسي 2026/2027؟')" class="px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-purple-500/20 border border-slate-700 text-xs font-bold text-purple-200 transition cursor-pointer">
+                        المواعيد الرسمية 2026/2027
+                    </button>
+                    <button type="button" onclick="sendQuickPrompt('حلل ميزانيتي الحالية وقدّم نصيحة لتوفير المصروفات.')" class="px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-emerald-500/20 border border-slate-700 text-xs font-bold text-emerald-200 transition cursor-pointer">
+                        تحليل ميزانيتي الحالية
+                    </button>
+                </div>
+
+                <div id="chat-messages" class="space-y-3 h-96 overflow-y-auto p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80"></div>
+
+                <form onsubmit="handleSendChat(event)" class="flex items-center gap-2.5">
+                    <input id="chat-input" type="text" required placeholder="اسأل عن ميزانيتك، موادك، مهامك، أو المواعيد المعتمدة..." class="flex-1 px-4 py-3 rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-indigo-400 focus:outline-none text-sm font-bold text-white">
+                    <button type="submit" id="chat-send-btn" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-sm flex items-center gap-2 transition cursor-pointer">
+                        <span>إرسال</span>
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- القسم الرابع: المواد والتحكم الكامل -->
+        <section id="tab-controls" class="tab-panel hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-6 glass rounded-3xl p-6 space-y-4">
+                    <h2 class="text-lg font-black text-white flex items-center gap-2">
+                        <i data-lucide="book-marked" class="w-5 h-5 text-indigo-400"></i>
+                        <span>إدارة المواد الدراسية (إضافة / تعديل / حذف)</span>
+                    </h2>
+
+                    <form onsubmit="handleAddSubject(event)" class="flex items-center gap-2">
+                        <input id="new-subject-input" type="text" required placeholder="اسم المادة الجديدة (مثال: الفيزياء)" class="flex-1 px-4 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-indigo-400 focus:outline-none text-xs sm:text-sm font-bold text-white">
+                        <button type="submit" class="px-4 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black transition cursor-pointer">
+                            إضافة مادة
+                        </button>
+                    </form>
+
+                    <div id="subjects-management-list" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
+                </div>
+
+                <div class="lg:col-span-6 glass rounded-3xl p-6 space-y-4">
+                    <h2 class="text-lg font-black text-white flex items-center gap-2">
+                        <i data-lucide="settings" class="w-5 h-5 text-purple-400"></i>
+                        <span>التحكم الكامل بالبيانات والنسخ الاحتياطي</span>
+                    </h2>
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">اسم الطالب</label>
+                            <div class="flex gap-2">
+                                <input id="settings-student-name" type="text" class="flex-1 px-4 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs sm:text-sm font-bold text-white">
+                                <button type="button" onclick="saveStudentNameFromSettings()" class="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black transition cursor-pointer">
+                                    حفظ الاسم
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">المرحلة الدراسية</label>
+                                <select id="settings-stage-select" onchange="onStageSelectionChange(this.value, 'settings')" class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs sm:text-sm font-bold text-white">
+                                    <option value="المرحلة الإعدادية">المرحلة الإعدادية</option>
+                                    <option value="المرحلة الثانوية">المرحلة الثانوية</option>
+                                    <option value="البكالوريا">البكالوريا</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">عدد المواد (اختياري)</label>
+                                <div class="flex gap-2">
+                                    <input id="settings-subjects-count" type="number" min="1" max="20" class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs sm:text-sm font-bold text-white tabular-nums">
+                                    <button type="button" onclick="applySubjectsCountFromSettings()" class="px-3.5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-black transition cursor-pointer shrink-0">
+                                        تطبيق
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">حد تنبيه الميزانية (ج.م)</label>
+                            <div class="flex gap-2">
+                                <input id="settings-budget-limit" type="number" min="0" step="10" class="flex-1 px-4 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700 text-xs sm:text-sm font-bold text-white tabular-nums">
+                                <button type="button" onclick="saveBudgetLimitFromSettings()" class="px-4 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black transition cursor-pointer">
+                                    تحديث الحد
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-800/80 grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <button type="button" onclick="exportBackupJSON()" aria-label="تصدير نسخة احتياطية JSON" class="py-2.5 px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs font-extrabold flex items-center justify-center gap-1.5 transition cursor-pointer">
+                            <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i>
+                            <span>تصدير JSON</span>
+                        </button>
+                        <label aria-label="استيراد نسخة احتياطية JSON" class="py-2.5 px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs font-extrabold flex items-center justify-center gap-1.5 transition cursor-pointer">
+                            <i data-lucide="upload" class="w-4 h-4 text-indigo-400"></i>
+                            <span>استيراد JSON</span>
+                            <input type="file" accept=".json,application/json" onchange="importBackupJSON(event)" class="hidden">
+                        </label>
+                        <button type="button" onclick="resetAllData()" aria-label="مسح جميع البيانات وإعادة الضبط" class="py-2.5 px-3 rounded-2xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-xs font-extrabold flex items-center justify-center gap-1.5 transition cursor-pointer">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            <span>مسح الكل</span>
+                        </button>
+                    </div>
+
+                    <div id="reset-confirm-box" class="hidden p-3.5 rounded-2xl bg-rose-950/75 border border-rose-500/40 space-y-2.5">
+                        <p class="text-xs font-bold text-rose-200">تأكيد مسح الكل: سيتم حذف جميع المعاملات والحصص والمهام والملاحظات والمنبهات المحلية نهائياً. هل تريد المتابعة؟</p>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="confirmResetAllData()" class="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-black transition cursor-pointer">تأكيد المسح النهائي</button>
+                            <button type="button" onclick="cancelResetAllData()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition cursor-pointer">إلغاء</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- تذييل الصفحة -->
+        <footer class="pt-2 pb-6 text-center">
+            <p class="text-[11px] text-slate-400">
+                تطوير وبرمجة: <span class="font-bold text-slate-300">محمد أيمن</span> • الموقع الإلكتروني:
+                <a href="https://mohammedpoet461-lab.github.io/MOAYMEN/" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:text-indigo-300 underline underline-offset-4">
+                    https://mohammedpoet461-lab.github.io/MOAYMEN/
+                </a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'rafiqy_smart_student_v2026_1';
+        const STAGE_PRESETS = {
+            'المرحلة الإعدادية': {
+                defaultCount: 6,
+                subjects: [
+                    'اللغة العربية',
+                    'اللغة الإنجليزية',
+                    'الرياضيات',
+                    'العلوم',
+                    'الدراسات الاجتماعية',
+                    'البرمجة ومنصة SPRIX'
+                ]
+            },
+            'المرحلة الثانوية': {
+                defaultCount: 6,
+                subjects: [
+                    'العربي',
+                    'الإنجليزي',
+                    'البرمجة (عملي على منصة SPRIX)',
+                    'البرمجة (نظري)',
+                    'التاريخ الوطني',
+                    'الثقافة المالية'
+                ]
+            },
+            'البكالوريا': {
+                defaultCount: 6,
+                subjects: [
+                    'العربي',
+                    'الإنجليزي',
+                    'البرمجة (عملي على منصة SPRIX)',
+                    'البرمجة (نظري)',
+                    'التاريخ الوطني',
+                    'الثقافة المالية'
+                ]
+            }
+        };
+        const DEFAULT_SUBJECTS = [...STAGE_PRESETS['المرحلة الثانوية'].subjects];
+
+        const OFFICIAL_FACTS_2026_2027 = [
+            'امتحانات نصف العام للمرحلة الثانوية تبدأ من 9 يناير 2027 حتى 14 يناير 2027.',
+            'إجازة نصف العام تبدأ من 23 يناير 2027 حتى 4 فبراير 2027.',
+            'بداية الفصل الدراسي الثاني يوم 6 فبراير 2027.',
+            'امتحانات الدور الأول للصف الثاني بكالوريا تبدأ يوم 12 يونيو 2027 وتستمر حتى 22 يونيو 2027.',
+            'نظام التقييم في البكالوريا: 50% اختيار من متعدد و50% أسئلة مقالية.',
+            'منصة البرمجة العملية: SPRIX Portal (https://sprixportal.jp/).'
+        ];
+
+        function createDefaultState() {
+            const todayIso = getTodayISO();
+            return {
+                studentName: '',
+                stage: 'المرحلة الثانوية',
+                targetSubjectCount: 6,
+                budgetLimit: 1500,
+                subjects: [...DEFAULT_SUBJECTS],
+                transactions: [
+                    { id: 'tx-1', type: 'income', amount: 1200, desc: 'مصروف شهري أساسي', category: 'مصروف جيب', date: todayIso },
+                    { id: 'tx-2', type: 'expense', amount: 180, desc: 'مواصلات أسبوعية', category: 'مواصلات', date: todayIso },
+                    { id: 'tx-3', type: 'expense', amount: 150, desc: 'ملخصات برمجة وتاريخ وطني', category: 'كتب ومنصات', date: todayIso }
+                ],
+                lessons: [
+                    { id: 'ls-1', subject: 'البرمجة (عملي على منصة SPRIX)', day: 'السبت', time: '17:00', notes: 'تطبيقات عملية على منصة SPRIX Portal' },
+                    { id: 'ls-2', subject: 'البرمجة (نظري)', day: 'الأحد', time: '18:30', notes: 'مراجعة المفاهيم والأسئلة النظرية' },
+                    { id: 'ls-3', subject: 'الثقافة المالية', day: 'الاثنين', time: '16:00', notes: 'دراسة الميزانية وإدارة الموارد' }
+                ],
+                tasks: [
+                    { id: 'tk-1', subject: 'البرمجة (عملي على منصة SPRIX)', title: 'حل تدريبات الوحدة العملية على SPRIX Portal', date: todayIso, reminder: '16:30', completed: false, lastAlerted: '' },
+                    { id: 'tk-2', subject: 'العربي', title: 'مراجعة نصوص وبلاغة ومقالات', date: todayIso, reminder: '18:00', completed: false, lastAlerted: '' },
+                    { id: 'tk-3', subject: 'التاريخ الوطني', title: 'تلخيص أحداث الفصل الدراسي الأول', date: todayIso, reminder: '19:00', completed: true, lastAlerted: '' }
+                ],
+                notes: [
+                    {
+                        id: 'nt-1',
+                        date: todayIso,
+                        subject: 'البرمجة (عملي على منصة SPRIX)',
+                        title: 'ملاحظات جلسة منصة SPRIX',
+                        content: 'أكمل التطبيق العملي وراجع خطوات الحل قبل اختبار الأسبوع.'
+                    }
+                ],
+                alarms: [
+                    { id: 'al-1', time: '16:00', label: 'مراجعة دروس اليوم', enabled: true, lastTriggered: '' }
+                ],
+                stopwatchLaps: [],
+                chatHistory: [
+                    {
+                        role: 'model',
+                        text: 'أهلاً بك! أنا المساعد الذكي المحلي. أستطيع تحليل ميزانيتك، اقتراح خطة مذاكرة لموادك، وعرض المواعيد الرسمية المعتمدة للعام الدراسي 2026/2027.'
+                    }
+                ]
+            };
+        }
+
+        let state = loadState();
+        let currentTab = 'dashboard';
+        let currentTxType = 'expense';
+        let currentTxFilter = 'all';
+        let currentLessonSubjectFilter = 'الكل';
+        let currentTaskSubjectFilter = 'الكل';
+        const initialNow = new Date();
+        let calendarViewDate = new Date(initialNow.getFullYear(), initialNow.getMonth(), 1);
+        let selectedCalendarDateStr = getTodayISO();
+        let toneScriptPromise = null;
+
+        function getTodayISO() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return createDefaultState();
+                const parsed = JSON.parse(raw);
+                const def = createDefaultState();
+                const validStage = STAGE_PRESETS[parsed.stage] ? parsed.stage : def.stage;
+                const loadedSubjects = Array.isArray(parsed.subjects) && parsed.subjects.length ? parsed.subjects : [...STAGE_PRESETS[validStage].subjects];
+                return {
+                    ...def,
+                    ...parsed,
+                    stage: validStage,
+                    targetSubjectCount: Math.max(1, Math.min(20, parseInt(parsed.targetSubjectCount, 10) || loadedSubjects.length)),
+                    subjects: loadedSubjects,
+                    transactions: Array.isArray(parsed.transactions) ? parsed.transactions : def.transactions,
+                    lessons: Array.isArray(parsed.lessons) ? parsed.lessons : def.lessons,
+                    tasks: Array.isArray(parsed.tasks) ? parsed.tasks : def.tasks,
+                    notes: Array.isArray(parsed.notes) ? parsed.notes : def.notes,
+                    alarms: Array.isArray(parsed.alarms) ? parsed.alarms : def.alarms,
+                    stopwatchLaps: Array.isArray(parsed.stopwatchLaps) ? parsed.stopwatchLaps : def.stopwatchLaps,
+                    chatHistory: Array.isArray(parsed.chatHistory) && parsed.chatHistory.length ? parsed.chatHistory : def.chatHistory
+                };
+            } catch (_) {
+                return createDefaultState();
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } catch (_) {
+                showToast('تعذّر حفظ البيانات محلياً في المتصفح.', 'error');
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const palette = {
+                info: 'bg-slate-900/95 border-indigo-400/40 text-indigo-200',
+                success: 'bg-emerald-950/95 border-emerald-400/40 text-emerald-200',
+                error: 'bg-rose-950/95 border-rose-400/40 text-rose-200'
+            };
+            const el = document.createElement('div');
+            el.className = `px-4 py-3 rounded-2xl border shadow-xl text-xs font-extrabold transition ${palette[type] || palette.info}`;
+            el.textContent = message;
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 3400);
+        }
+
+        function updateNetworkStatus() {
+            const badge = document.getElementById('network-status-badge');
+            if (!badge) return;
+            const online = navigator.onLine;
+            if (online) {
+                badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-500/15 text-emerald-300 border border-emerald-400/25';
+                badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>متصل بالنت</span>';
+            } else {
+                badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-500/15 text-amber-300 border border-amber-400/25';
+                badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400"></span><span>وضع أوفلاين</span>';
+            }
+        }
+
+        function updateLiveClock() {
+            const el = document.getElementById('header-live-clock');
+            if (!el) return;
+            const now = new Date();
+            el.textContent = now.toLocaleDateString('ar-EG', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }) + ' • ' + now.toLocaleTimeString('ar-EG', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        function ensureToneLoaded() {
+            if (typeof Tone !== 'undefined') return Promise.resolve(true);
+            if (toneScriptPromise) return toneScriptPromise;
+            toneScriptPromise = new Promise((resolve) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js';
+                script.async = true;
+                script.onload = () => resolve(typeof Tone !== 'undefined');
+                script.onerror = () => resolve(false);
+                document.head.appendChild(script);
+            });
+            return toneScriptPromise;
+        }
+
+        async function playAlertTone() {
+            try {
+                const loaded = await ensureToneLoaded();
+                if (loaded && typeof Tone !== 'undefined') {
+                    await Tone.start();
+                    const synth = new Tone.Synth().toDestination();
+                    synth.triggerAttackRelease('C5', '0.16');
+                    setTimeout(() => synth.triggerAttackRelease('G5', '0.22'), 180);
+                    return;
+                }
+            } catch (_) {}
+
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(660, ctx.currentTime);
+                gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.25);
+            } catch (_) {}
+        }
+
+        function testSoundAlert() {
+            playAlertTone();
+            showToast('تم تشغيل نغمة التنبيه بنجاح.', 'success');
+        }
+
+        function openStudentLoginModal() {
+            const modal = document.getElementById('student-login-modal');
+            const input = document.getElementById('login-student-name-input');
+            const err = document.getElementById('login-error-msg');
+            const stageSel = document.getElementById('login-stage-select');
+            const countInput = document.getElementById('login-subjects-count-input');
+            if (!modal || !input) return;
+
+            const activeStage = STAGE_PRESETS[state.stage] ? state.stage : 'المرحلة الثانوية';
+            const activeCount = Math.max(1, Math.min(20, parseInt(countInput?.value || state.targetSubjectCount || state.subjects.length, 10) || 6));
+
+            if (stageSel) stageSel.value = activeStage;
+            if (countInput) countInput.value = activeCount;
+            syncStageLoginLabels(activeStage, activeCount);
+
+            input.value = state.studentName || 'محمد أيمن';
+            if (err) err.classList.add('hidden');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                input.focus();
+                input.select();
+            }, 60);
+        }
+
+        function syncStageLoginLabels(stageName, countVal) {
+            const safeStage = STAGE_PRESETS[stageName] ? stageName : 'المرحلة الثانوية';
+            const safeCount = Math.max(1, Math.min(20, parseInt(countVal, 10) || 6));
+            const badge = document.getElementById('login-stage-badge');
+            const cardStage = document.getElementById('login-stage-card');
+            const countEl = document.getElementById('login-subjects-count');
+            if (badge) badge.textContent = safeStage;
+            if (cardStage) cardStage.textContent = safeStage;
+            if (countEl) countEl.textContent = `${safeCount} ${safeCount === 1 ? 'مادة' : 'مواد'}`;
+        }
+
+        function buildSubjectsForStage(stageName, desiredCount, existingSubjects = []) {
+            const preset = STAGE_PRESETS[stageName] || STAGE_PRESETS['المرحلة الثانوية'];
+            const count = Math.max(1, Math.min(20, parseInt(desiredCount, 10) || preset.defaultCount));
+            const baseList = Array.isArray(existingSubjects) && existingSubjects.length ? [...existingSubjects] : [...preset.subjects];
+            const result = [];
+
+            for (let i = 0; i < count; i++) {
+                if (baseList[i] && !result.includes(baseList[i])) {
+                    result.push(baseList[i]);
+                } else if (preset.subjects[i] && !result.includes(preset.subjects[i])) {
+                    result.push(preset.subjects[i]);
+                } else {
+                    let candidate = `مادة إضافية ${i + 1}`;
+                    let suffix = i + 1;
+                    while (result.includes(candidate)) {
+                        suffix++;
+                        candidate = `مادة إضافية ${suffix}`;
+                    }
+                    result.push(candidate);
+                }
+            }
+            return result;
+        }
+
+        function onStageSelectionChange(stageName, source = 'login') {
+            const safeStage = STAGE_PRESETS[stageName] ? stageName : 'المرحلة الثانوية';
+            const presetCount = STAGE_PRESETS[safeStage].defaultCount;
+
+            if (source === 'login') {
+                const countInput = document.getElementById('login-subjects-count-input');
+                if (countInput) countInput.value = presetCount;
+                syncStageLoginLabels(safeStage, presetCount);
+            } else {
+                const countInput = document.getElementById('settings-subjects-count');
+                if (countInput) countInput.value = presetCount;
+                state.stage = safeStage;
+                state.targetSubjectCount = presetCount;
+                state.subjects = buildSubjectsForStage(safeStage, presetCount, []);
+                saveState();
+                renderAll();
+                showToast(`تم الضبط على ${safeStage} (${presetCount} مواد).`, 'info');
+            }
+        }
+
+        function onSubjectsCountChange(val, source = 'login') {
+            const safeCount = Math.max(1, Math.min(20, parseInt(val, 10) || 1));
+            if (source === 'login') {
+                const countInput = document.getElementById('login-subjects-count-input');
+                const stageSel = document.getElementById('login-stage-select');
+                if (countInput) countInput.value = safeCount;
+                syncStageLoginLabels(stageSel?.value || state.stage, safeCount);
+            }
+        }
+
+        function applySubjectsCountFromSettings() {
+            const stageVal = document.getElementById('settings-stage-select')?.value || state.stage;
+            const countVal = Math.max(1, Math.min(20, parseInt(document.getElementById('settings-subjects-count')?.value, 10) || 1));
+            state.stage = STAGE_PRESETS[stageVal] ? stageVal : 'المرحلة الثانوية';
+            state.targetSubjectCount = countVal;
+            state.subjects = buildSubjectsForStage(state.stage, countVal, state.subjects);
+            if (!state.subjects.includes(currentLessonSubjectFilter)) currentLessonSubjectFilter = 'الكل';
+            if (!state.subjects.includes(currentTaskSubjectFilter)) currentTaskSubjectFilter = 'الكل';
+            saveState();
+            renderAll();
+            showToast(`تم تحديث عدد المواد إلى ${countVal} في ${state.stage}.`, 'success');
+        }
+
+        function fillSuggestedStudentName(name) {
+            const input = document.getElementById('login-student-name-input');
+            const err = document.getElementById('login-error-msg');
+            if (!input) return;
+            input.value = name;
+            if (err) err.classList.add('hidden');
+            input.focus();
+        }
+
+        function closeStudentLoginModal() {
+            const modal = document.getElementById('student-login-modal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function submitStudentLogin() {
+            const input = document.getElementById('login-student-name-input');
+            const err = document.getElementById('login-error-msg');
+            const stageSel = document.getElementById('login-stage-select');
+            const countInput = document.getElementById('login-subjects-count-input');
+            if (!input) return;
+            const name = input.value.trim();
+            if (!name) {
+                if (err) err.classList.remove('hidden');
+                input.focus();
+                return;
+            }
+            if (err) err.classList.add('hidden');
+            const chosenStage = STAGE_PRESETS[stageSel?.value] ? stageSel.value : 'المرحلة الثانوية';
+            const chosenCount = Math.max(1, Math.min(20, parseInt(countInput?.value, 10) || STAGE_PRESETS[chosenStage].defaultCount));
+
+            state.studentName = name;
+            state.stage = chosenStage;
+            state.targetSubjectCount = chosenCount;
+            state.subjects = buildSubjectsForStage(chosenStage, chosenCount, state.subjects);
+            saveState();
+            closeStudentLoginModal();
+            renderAll();
+            showToast(`أهلاً بك يا ${name} (${chosenStage} • ${chosenCount} مواد).`, 'success');
+        }
+
+        function switchTab(tabName) {
+            currentTab = tabName;
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.toggle('hidden', panel.id !== `tab-${tabName}`);
+            });
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                const active = btn.dataset.tab === tabName;
+                btn.className = active
+                    ? 'nav-tab px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 whitespace-nowrap transition cursor-pointer bg-indigo-600 text-white shadow-lg shadow-indigo-950/50'
+                    : 'nav-tab px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 whitespace-nowrap transition cursor-pointer text-slate-300 hover:bg-slate-800/70';
+            });
+        }
+
+        function setTxType(type) {
+            currentTxType = type;
+            const expBtn = document.getElementById('tx-type-expense');
+            const incBtn = document.getElementById('tx-type-income');
+            if (!expBtn || !incBtn) return;
+
+            if (type === 'expense') {
+                expBtn.className = 'py-2.5 rounded-2xl text-xs font-black border transition cursor-pointer bg-rose-500/20 border-rose-400/40 text-rose-300';
+                incBtn.className = 'py-2.5 rounded-2xl text-xs font-black border transition cursor-pointer bg-slate-800/60 border-slate-700 text-slate-300';
+            } else {
+                incBtn.className = 'py-2.5 rounded-2xl text-xs font-black border transition cursor-pointer bg-emerald-500/20 border-emerald-400/40 text-emerald-300';
+                expBtn.className = 'py-2.5 rounded-2xl text-xs font-black border transition cursor-pointer bg-slate-800/60 border-slate-700 text-slate-300';
+            }
+        }
+
+        function handleAddTransaction(e) {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('tx-amount').value);
+            const desc = document.getElementById('tx-desc').value.trim();
+            const category = document.getElementById('tx-category').value;
+            const date = document.getElementById('tx-date').value;
+
+            if (!amount || amount <= 0 || !desc || !date) {
+                showToast('يرجى إدخال بيانات المعاملة بشكل صحيح.', 'error');
+                return;
+            }
+
+            state.transactions.unshift({
+                id: 'tx-' + Date.now(),
+                type: currentTxType,
+                amount,
+                desc,
+                category,
+                date
+            });
+            saveState();
+            renderAll();
+            document.getElementById('tx-amount').value = '';
+            document.getElementById('tx-desc').value = '';
+            showToast('تمت إضافة المعاملة المالية.', 'success');
+        }
+
+        function deleteTransaction(id) {
+            state.transactions = state.transactions.filter(t => t.id !== id);
+            saveState();
+            renderAll();
+            showToast('تم حذف المعاملة.', 'info');
+        }
+
+        function setTxFilter(filter) {
+            currentTxFilter = filter;
+            document.querySelectorAll('.tx-filter-btn').forEach(btn => {
+                const active = btn.dataset.txFilter === filter;
+                btn.className = active
+                    ? 'tx-filter-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-indigo-600 text-white cursor-pointer'
+                    : 'tx-filter-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer';
+            });
+            renderTransactions();
+        }
+
+        function renderStats() {
+            const income = state.transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+            const expense = state.transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+            const balance = income - expense;
+
+            document.getElementById('stat-income').textContent = `${income.toFixed(2)} ج.م`;
+            document.getElementById('stat-expense').textContent = `${expense.toFixed(2)} ج.م`;
+            document.getElementById('stat-balance').textContent = `${balance.toFixed(2)} ج.م`;
+
+            const statusEl = document.getElementById('stat-budget-status');
+            if (expense > state.budgetLimit) {
+                statusEl.textContent = `تنبيه: تجاوزت حد المصروفات (${state.budgetLimit} ج.م)`;
+                statusEl.className = 'text-xs text-rose-400 font-bold mt-2';
+            } else {
+                statusEl.textContent = `ضمن الحد المحدد (${state.budgetLimit} ج.م)`;
+                statusEl.className = 'text-xs text-emerald-400 mt-2';
+            }
+
+            const totalTasks = state.tasks.length;
+            const doneTasks = state.tasks.filter(t => t.completed).length;
+            const pct = totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0;
+            document.getElementById('stat-study-progress').textContent = `${pct}%`;
+            document.getElementById('stat-study-counts').textContent = `${doneTasks} من ${totalTasks} مهام مكتملة`;
+        }
+
+        function renderTransactions() {
+            const list = document.getElementById('transactions-list');
+            if (!list) return;
+            const q = (document.getElementById('tx-search-input')?.value || '').trim().toLowerCase();
+
+            const filtered = state.transactions.filter(t => {
+                if (currentTxFilter !== 'all' && t.type !== currentTxFilter) return false;
+                if (!q) return true;
+                return (
+                    t.desc.toLowerCase().includes(q) ||
+                    t.category.toLowerCase().includes(q) ||
+                    t.date.toLowerCase().includes(q)
+                );
+            });
+
+            if (!filtered.length) {
+                list.innerHTML = '<div class="text-center py-8 text-xs text-slate-400">لا توجد معاملات مطابقة للبحث أو الفلتر.</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(t => {
+                const isInc = t.type === 'income';
+                return `
+                    <div class="flex items-center justify-between gap-3 p-3.5 rounded-2xl glass-subtle">
+                        <div class="min-w-0">
+                            <p class="text-sm font-extrabold text-white truncate">${escapeHtml(t.desc)}</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5 tabular-nums">${escapeHtml(t.category)} • ${escapeHtml(t.date)}</p>
+                        </div>
+                        <div class="flex items-center gap-3 shrink-0">
+                            <span class="text-sm font-black tabular-nums ${isInc ? 'text-emerald-400' : 'text-rose-400'}">
+                                ${isInc ? '+' : '-'}${Number(t.amount).toFixed(2)} ج.م
+                            </span>
+                            <button type="button" onclick="deleteTransaction('${t.id}')" aria-label="حذف المعاملة" class="p-1.5 rounded-xl hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 transition cursor-pointer" title="حذف">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function renderSubjectsProgress() {
+            const grid = document.getElementById('subjects-progress-grid');
+            if (!grid) return;
+
+            grid.innerHTML = state.subjects.map(subj => {
+                const subTasks = state.tasks.filter(t => t.subject === subj);
+                const done = subTasks.filter(t => t.completed).length;
+                const pct = subTasks.length ? Math.round((done / subTasks.length) * 100) : 0;
+                return `
+                    <div class="p-4 rounded-2xl glass-subtle space-y-2">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs sm:text-sm font-extrabold text-white truncate">${escapeHtml(subj)}</span>
+                            <span class="text-xs font-black text-indigo-300 tabular-nums">${pct}%</span>
+                        </div>
+                        <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300" style="width:${pct}%"></div>
+                        </div>
+                        <p class="text-[11px] text-slate-400 tabular-nums">${done} من ${subTasks.length} مهام مكتملة</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function populateSubjectSelects() {
+            document.querySelectorAll('.subject-select').forEach(sel => {
+                const prev = sel.value;
+                sel.innerHTML = state.subjects.map(s => `<option value="${escapeAttr(s)}">${escapeHtml(s)}</option>`).join('');
+                if (state.subjects.includes(prev)) sel.value = prev;
+            });
+        }
+
+        function renderSubjectFilterChips(containerId, activeSubj, onClickName) {
+            const box = document.getElementById(containerId);
+            if (!box) return;
+            const items = ['الكل', ...state.subjects];
+            box.innerHTML = items.map(sub => {
+                const active = activeSubj === sub;
+                return `<button type="button" data-sub="${escapeAttr(sub)}" onclick="${onClickName}(this.dataset.sub)" class="px-2.5 py-1 rounded-xl text-[11px] font-extrabold transition cursor-pointer ${active ? 'bg-indigo-600 text-white' : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700'}">${escapeHtml(sub)}</button>`;
+            }).join('');
+        }
+
+        function setLessonSubjectFilter(sub) {
+            currentLessonSubjectFilter = sub;
+            renderLessons();
+        }
+
+        function setTaskSubjectFilter(sub) {
+            currentTaskSubjectFilter = sub;
+            renderTasks();
+        }
+
+        function handleAddLesson(e) {
+            e.preventDefault();
+            const subject = document.getElementById('lesson-subject').value;
+            const day = document.getElementById('lesson-day').value.trim();
+            const time = document.getElementById('lesson-time').value;
+            const notes = document.getElementById('lesson-notes').value.trim();
+            if (!subject || !day || !time) return;
+
+            state.lessons.push({
+                id: 'ls-' + Date.now(),
+                subject,
+                day,
+                time,
+                notes
+            });
+            saveState();
+            renderLessons();
+            document.getElementById('lesson-day').value = '';
+            document.getElementById('lesson-notes').value = '';
+            showToast('تمت إضافة الحصة الدراسية.', 'success');
+        }
+
+        function deleteLesson(id) {
+            state.lessons = state.lessons.filter(l => l.id !== id);
+            saveState();
+            renderLessons();
+        }
+
+        function renderLessons() {
+            renderSubjectFilterChips('lessons-subject-filters', currentLessonSubjectFilter, 'setLessonSubjectFilter');
+            const list = document.getElementById('lessons-list');
+            if (!list) return;
+
+            const filtered = currentLessonSubjectFilter === 'الكل'
+                ? state.lessons
+                : state.lessons.filter(l => l.subject === currentLessonSubjectFilter);
+
+            if (!filtered.length) {
+                list.innerHTML = '<div class="text-center py-6 text-xs text-slate-400">لا توجد حصص مسجلة لهذه المادة.</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(l => `
+                <div class="flex items-center justify-between gap-3 p-3.5 rounded-2xl glass-subtle">
+                    <div>
+                        <p class="text-xs sm:text-sm font-black text-indigo-300">${escapeHtml(l.subject)}</p>
+                        <p class="text-xs text-slate-200 mt-0.5 tabular-nums">${escapeHtml(l.day)} • ${escapeHtml(l.time)}</p>
+                        ${l.notes ? `<p class="text-[11px] text-slate-400 mt-0.5">${escapeHtml(l.notes)}</p>` : ''}
+                    </div>
+                    <button type="button" onclick="deleteLesson('${l.id}')" aria-label="حذف الحصة" class="p-1.5 rounded-xl hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 transition cursor-pointer">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function handleAddTask(e) {
+            e.preventDefault();
+            const subject = document.getElementById('task-subject').value;
+            const title = document.getElementById('task-title').value.trim();
+            const date = document.getElementById('task-date').value;
+            const reminder = document.getElementById('task-reminder').value;
+            if (!subject || !title || !date) return;
+
+            state.tasks.unshift({
+                id: 'tk-' + Date.now(),
+                subject,
+                title,
+                date,
+                reminder,
+                completed: false,
+                lastAlerted: ''
+            });
+            saveState();
+            renderAll();
+            document.getElementById('task-title').value = '';
+            showToast('تمت إضافة مهمة المذاكرة.', 'success');
+        }
+
+        function toggleTask(id) {
+            const task = state.tasks.find(t => t.id === id);
+            if (!task) return;
+            task.completed = !task.completed;
+            saveState();
+            renderAll();
+        }
+
+        function deleteTask(id) {
+            state.tasks = state.tasks.filter(t => t.id !== id);
+            saveState();
+            renderAll();
+        }
+
+        function renderTasks() {
+            renderSubjectFilterChips('tasks-subject-filters', currentTaskSubjectFilter, 'setTaskSubjectFilter');
+            const list = document.getElementById('tasks-list');
+            if (!list) return;
+
+            const filtered = currentTaskSubjectFilter === 'الكل'
+                ? state.tasks
+                : state.tasks.filter(t => t.subject === currentTaskSubjectFilter);
+
+            if (!filtered.length) {
+                list.innerHTML = '<div class="text-center py-6 text-xs text-slate-400">لا توجد مهام مذاكرة لهذه المادة.</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(t => `
+                <div class="flex items-center justify-between gap-3 p-3.5 rounded-2xl glass-subtle">
+                    <div class="flex items-start gap-3 min-w-0">
+                        <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTask('${t.id}')" aria-label="تحديد المهمة كمكتملة" class="mt-1 w-4 h-4 rounded accent-indigo-500 cursor-pointer">
+                        <div class="min-w-0">
+                            <p class="text-xs sm:text-sm font-bold ${t.completed ? 'line-through text-slate-500' : 'text-white'}">${escapeHtml(t.title)}</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5 tabular-nums">${escapeHtml(t.subject)} • ${escapeHtml(t.date)}${t.reminder ? ` • تنبيه ${escapeHtml(t.reminder)}` : ''}</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="deleteTask('${t.id}')" aria-label="حذف المهمة" class="p-1.5 rounded-xl hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 transition cursor-pointer shrink-0">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function formatDateKey(year, monthIndex, day) {
+            return `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        }
+
+        function selectCalendarDate(isoDate) {
+            if (!isoDate) return;
+            selectedCalendarDateStr = isoDate;
+            const parts = isoDate.split('-').map(Number);
+            if (parts.length === 3 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                calendarViewDate = new Date(parts[0], parts[1] - 1, 1);
+            }
+            const noteDateInput = document.getElementById('note-date-input');
+            if (noteDateInput) noteDateInput.value = selectedCalendarDateStr;
+            renderCalendarAndNotes();
+        }
+
+        function changeCalendarMonth(delta) {
+            calendarViewDate = new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth() + delta, 1);
+            renderCalendarAndNotes();
+        }
+
+        function jumpCalendarToToday() {
+            selectCalendarDate(getTodayISO());
+        }
+
+        function handleAddNotebookNote(e) {
+            e.preventDefault();
+            const dateVal = document.getElementById('note-date-input')?.value || selectedCalendarDateStr || getTodayISO();
+            const subjectVal = document.getElementById('note-subject-select')?.value || state.subjects[0] || 'عام';
+            const titleVal = document.getElementById('note-title-input')?.value.trim() || '';
+            const contentVal = document.getElementById('note-content-input')?.value.trim() || '';
+
+            if (!titleVal) {
+                showToast('من فضلك أدخل عنوان الملاحظة.', 'error');
+                return;
+            }
+
+            state.notes.unshift({
+                id: 'nt-' + Date.now(),
+                date: dateVal,
+                subject: subjectVal,
+                title: titleVal,
+                content: contentVal
+            });
+            selectedCalendarDateStr = dateVal;
+            saveState();
+            document.getElementById('note-title-input').value = '';
+            document.getElementById('note-content-input').value = '';
+            renderCalendarAndNotes();
+            showToast('تم حفظ الملاحظة في المفكرة.', 'success');
+        }
+
+        function editNotebookNote(noteId) {
+            const note = state.notes.find(n => n.id === noteId);
+            if (!note) return;
+            const updatedTitle = prompt('تعديل عنوان الملاحظة:', note.title);
+            if (updatedTitle === null) return;
+            const cleanTitle = updatedTitle.trim();
+            if (!cleanTitle) {
+                showToast('لا يمكن أن يكون العنوان فارغاً.', 'error');
+                return;
+            }
+            const updatedContent = prompt('تعديل نص الملاحظة:', note.content || '');
+            note.title = cleanTitle;
+            if (updatedContent !== null) note.content = updatedContent.trim();
+            saveState();
+            renderCalendarAndNotes();
+            showToast('تم تحديث الملاحظة.', 'success');
+        }
+
+        function deleteNotebookNote(noteId) {
+            state.notes = state.notes.filter(n => n.id !== noteId);
+            saveState();
+            renderCalendarAndNotes();
+            showToast('تم حذف الملاحظة.', 'info');
+        }
+
+        function renderCalendarAndNotes() {
+            const grid = document.getElementById('calendar-days-grid');
+            const monthLabel = document.getElementById('calendar-month-label');
+            const dateLabel = document.getElementById('selected-calendar-date-label');
+            const itemsCountEl = document.getElementById('calendar-day-items-count');
+            const dayTasksBox = document.getElementById('calendar-day-tasks');
+            const noteDateInput = document.getElementById('note-date-input');
+
+            if (!grid || !monthLabel) return;
+
+            const year = calendarViewDate.getFullYear();
+            const month = calendarViewDate.getMonth();
+            monthLabel.textContent = new Date(year, month, 1).toLocaleDateString('ar-EG', {
+                month: 'long',
+                year: 'numeric'
+            });
+
+            if (dateLabel) dateLabel.textContent = `التاريخ المحدد: ${selectedCalendarDateStr}`;
+            if (noteDateInput && noteDateInput.value !== selectedCalendarDateStr) {
+                noteDateInput.value = selectedCalendarDateStr;
+            }
+
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            const saturdayOffset = (firstDayOfMonth + 1) % 7;
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const todayIso = getTodayISO();
+
+            let cellsHtml = '';
+            for (let i = 0; i < saturdayOffset; i++) {
+                cellsHtml += '<div class="h-14 rounded-2xl bg-slate-900/25 border border-transparent"></div>';
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const iso = formatDateKey(year, month, day);
+                const dayTasksCount = state.tasks.filter(t => t.date === iso).length;
+                const dayNotesCount = state.notes.filter(n => n.date === iso).length;
+                const isSelected = iso === selectedCalendarDateStr;
+                const isToday = iso === todayIso;
+
+                const borderClass = isSelected
+                    ? 'bg-indigo-600/35 border-indigo-400 text-white shadow-md'
+                    : isToday
+                        ? 'bg-slate-800/90 border-indigo-400/40 text-indigo-200'
+                        : 'glass-subtle hover:bg-slate-800/80 text-slate-200';
+
+                cellsHtml += `
+                    <button type="button" onclick="selectCalendarDate('${iso}')" class="h-14 p-1.5 rounded-2xl border flex flex-col items-center justify-between transition cursor-pointer ${borderClass}">
+                        <span class="text-xs font-black tabular-nums">${day}</span>
+                        <div class="flex items-center gap-1">
+                            ${dayTasksCount ? '<span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>' : ''}
+                            ${dayNotesCount ? '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>' : ''}
+                        </div>
+                    </button>
+                `;
+            }
+            grid.innerHTML = cellsHtml;
+
+            const dayTasks = state.tasks.filter(t => t.date === selectedCalendarDateStr);
+            const dayNotes = state.notes.filter(n => n.date === selectedCalendarDateStr);
+            if (itemsCountEl) {
+                const totalDayItems = dayTasks.length + dayNotes.length;
+                itemsCountEl.textContent = `${totalDayItems} ${totalDayItems === 1 ? 'عنصر' : 'عناصر'}`;
+            }
+
+            if (dayTasksBox) {
+                if (!dayTasks.length) {
+                    dayTasksBox.innerHTML = '<p class="text-[11px] text-slate-500">لا توجد مهام مذاكرة مجدولة في هذا اليوم.</p>';
+                } else {
+                    dayTasksBox.innerHTML = dayTasks.map(t => `
+                        <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-900/75 border border-slate-800">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTask('${t.id}')" class="w-3.5 h-3.5 rounded accent-indigo-500 cursor-pointer">
+                                <span class="text-xs truncate ${t.completed ? 'line-through text-slate-500' : 'text-slate-200 font-bold'}">${escapeHtml(t.title)}</span>
+                            </div>
+                            <span class="text-[10px] text-purple-300 shrink-0">${escapeHtml(t.subject)}</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            renderNotebookNotes();
+            lucide.createIcons();
+        }
+
+        function renderNotebookNotes() {
+            const list = document.getElementById('notebook-notes-list');
+            if (!list) return;
+            const query = (document.getElementById('notes-search-input')?.value || '').trim().toLowerCase();
+
+            const filtered = state.notes.filter(n => {
+                if (query) {
+                    return (
+                        n.title.toLowerCase().includes(query) ||
+                        (n.content || '').toLowerCase().includes(query) ||
+                        (n.subject || '').toLowerCase().includes(query) ||
+                        n.date.toLowerCase().includes(query)
+                    );
+                }
+                return n.date === selectedCalendarDateStr;
+            });
+
+            if (!filtered.length) {
+                list.innerHTML = '<p class="text-[11px] text-slate-500">لا توجد ملاحظات في المفكرة لهذا اليوم أو البحث.</p>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(n => `
+                <div class="p-3 rounded-2xl glass-subtle space-y-1">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <p class="text-xs sm:text-sm font-black text-white">${escapeHtml(n.title)}</p>
+                            <p class="text-[10px] text-emerald-300 font-bold tabular-nums">${escapeHtml(n.date)} • ${escapeHtml(n.subject || 'عام')}</p>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button type="button" onclick="editNotebookNote('${n.id}')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-indigo-500/20 text-[10px] font-bold text-indigo-300 cursor-pointer">تعديل</button>
+                            <button type="button" onclick="deleteNotebookNote('${n.id}')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-[10px] font-bold text-rose-300 cursor-pointer">حذف</button>
+                        </div>
+                    </div>
+                    ${n.content ? `<p class="text-xs text-slate-300 leading-relaxed whitespace-pre-line">${escapeHtml(n.content)}</p>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // المنبه والتيمر والمواقيت
+        let countdownRemainingSec = 25 * 60;
+        let countdownIntervalId = null;
+        let stopwatchElapsedMs = 0;
+        let stopwatchLastTick = null;
+        let stopwatchIntervalId = null;
+
+        function handleAddAlarm(e) {
+            e.preventDefault();
+            const timeVal = document.getElementById('alarm-time-input')?.value;
+            const labelVal = (document.getElementById('alarm-label-input')?.value || '').trim() || 'منبه مذاكرة';
+            if (!timeVal) return;
+
+            state.alarms.unshift({
+                id: 'al-' + Date.now(),
+                time: timeVal,
+                label: labelVal,
+                enabled: true,
+                lastTriggered: ''
+            });
+            saveState();
+            document.getElementById('alarm-label-input').value = '';
+            renderAlarmsList();
+            showToast(`تم ضبط منبه على الساعة ${timeVal}.`, 'success');
+        }
+
+        function toggleAlarmEnabled(id) {
+            const alarm = state.alarms.find(a => a.id === id);
+            if (!alarm) return;
+            alarm.enabled = !alarm.enabled;
+            alarm.lastTriggered = '';
+            saveState();
+            renderAlarmsList();
+        }
+
+        function deleteAlarm(id) {
+            state.alarms = state.alarms.filter(a => a.id !== id);
+            saveState();
+            renderAlarmsList();
+            showToast('تم حذف المنبه.', 'info');
+        }
+
+        function renderAlarmsList() {
+            const list = document.getElementById('alarms-list');
+            if (!list) return;
+            if (!state.alarms.length) {
+                list.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">لا توجد منبهات مضافة حالياً.</p>';
+                return;
+            }
+            list.innerHTML = state.alarms.map(a => `
+                <div class="flex items-center justify-between gap-2 p-3 rounded-2xl glass-subtle">
+                    <div>
+                        <p class="text-sm font-black tabular-nums ${a.enabled ? 'text-amber-300' : 'text-slate-500'}">${escapeHtml(a.time)}</p>
+                        <p class="text-xs ${a.enabled ? 'text-white font-bold' : 'text-slate-500'}">${escapeHtml(a.label)}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" ${a.enabled ? 'checked' : ''} onchange="toggleAlarmEnabled('${a.id}')" aria-label="تفعيل أو إيقاف المنبه" class="w-4 h-4 rounded accent-amber-500 cursor-pointer">
+                        <button type="button" onclick="deleteAlarm('${a.id}')" aria-label="حذف المنبه" class="p-1.5 rounded-xl hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 transition cursor-pointer">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function formatCountdownDisplay(totalSec) {
+            const safe = Math.max(0, Math.floor(totalSec));
+            const hrs = Math.floor(safe / 3600);
+            const mins = Math.floor((safe % 3600) / 60);
+            const secs = safe % 60;
+            if (hrs > 0) {
+                return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }
+            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function updateCountdownUI() {
+            const disp = document.getElementById('countdown-display');
+            const statusEl = document.getElementById('countdown-status-text');
+            const btn = document.getElementById('countdown-toggle-btn');
+            if (disp) disp.textContent = formatCountdownDisplay(countdownRemainingSec);
+            if (statusEl) statusEl.textContent = countdownIntervalId ? 'التيمر قيد التشغيل...' : 'جاهز للبدء';
+            if (btn) btn.textContent = countdownIntervalId ? 'إيقاف مؤقت' : 'بدء التيمر';
+        }
+
+        function setCountdownPreset(mins) {
+            stopCountdownInterval();
+            countdownRemainingSec = mins * 60;
+            const mIn = document.getElementById('timer-minutes-input');
+            const sIn = document.getElementById('timer-seconds-input');
+            if (mIn) mIn.value = mins;
+            if (sIn) sIn.value = 0;
+            updateCountdownUI();
+        }
+
+        function applyCustomCountdownInput() {
+            stopCountdownInterval();
+            const m = Math.max(0, Math.min(300, parseInt(document.getElementById('timer-minutes-input')?.value, 10) || 0));
+            const s = Math.max(0, Math.min(59, parseInt(document.getElementById('timer-seconds-input')?.value, 10) || 0));
+            countdownRemainingSec = m * 60 + s;
+            updateCountdownUI();
+        }
+
+        function stopCountdownInterval() {
+            if (countdownIntervalId) {
+                clearInterval(countdownIntervalId);
+                countdownIntervalId = null;
+            }
+        }
+
+        function toggleCountdownTimer() {
+            if (countdownIntervalId) {
+                stopCountdownInterval();
+                updateCountdownUI();
+                return;
+            }
+            if (countdownRemainingSec <= 0) {
+                applyCustomCountdownInput();
+            }
+            if (countdownRemainingSec <= 0) {
+                showToast('حدد وقتاً أكبر من الصفر للتيمر.', 'error');
+                return;
+            }
+            countdownIntervalId = setInterval(() => {
+                countdownRemainingSec -= 1;
+                updateCountdownUI();
+                if (countdownRemainingSec <= 0) {
+                    stopCountdownInterval();
+                    countdownRemainingSec = 0;
+                    updateCountdownUI();
+                    playAlertTone();
+                    showToast('انتهى وقت التيمر! أحسنت.', 'success');
+                }
+            }, 1000);
+            updateCountdownUI();
+        }
+
+        function resetCountdownTimer() {
+            stopCountdownInterval();
+            applyCustomCountdownInput();
+        }
+
+        function formatStopwatchDisplay(ms) {
+            const totalTenths = Math.floor(Math.max(0, ms) / 100);
+            const tenths = totalTenths % 10;
+            const totalSecs = Math.floor(totalTenths / 10);
+            const secs = totalSecs % 60;
+            const mins = Math.floor(totalSecs / 60) % 60;
+            const hrs = Math.floor(totalSecs / 3600);
+            return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${tenths}`;
+        }
+
+        function updateStopwatchUI() {
+            const disp = document.getElementById('stopwatch-display');
+            const btn = document.getElementById('stopwatch-toggle-btn');
+            if (disp) disp.textContent = formatStopwatchDisplay(stopwatchElapsedMs);
+            if (btn) btn.textContent = stopwatchIntervalId ? 'إيقاف' : 'بدء';
+        }
+
+        function toggleStopwatch() {
+            if (stopwatchIntervalId) {
+                clearInterval(stopwatchIntervalId);
+                stopwatchIntervalId = null;
+                stopwatchLastTick = null;
+                updateStopwatchUI();
+                return;
+            }
+            stopwatchLastTick = performance.now();
+            stopwatchIntervalId = setInterval(() => {
+                const now = performance.now();
+                stopwatchElapsedMs += now - (stopwatchLastTick || now);
+                stopwatchLastTick = now;
+                updateStopwatchUI();
+            }, 100);
+            updateStopwatchUI();
+        }
+
+        function recordStopwatchLap() {
+            if (stopwatchElapsedMs <= 0) {
+                showToast('شغّل ساعة الإيقاف أولاً لتسجيل ميقات.', 'error');
+                return;
+            }
+            state.stopwatchLaps.unshift({
+                id: 'lap-' + Date.now(),
+                lapNumber: state.stopwatchLaps.length + 1,
+                timeText: formatStopwatchDisplay(stopwatchElapsedMs)
+            });
+            saveState();
+            renderStopwatchLaps();
+            showToast('تم تسجيل الميقات.', 'success');
+        }
+
+        function resetStopwatch() {
+            if (stopwatchIntervalId) {
+                clearInterval(stopwatchIntervalId);
+                stopwatchIntervalId = null;
+            }
+            stopwatchLastTick = null;
+            stopwatchElapsedMs = 0;
+            updateStopwatchUI();
+        }
+
+        function clearStopwatchLaps() {
+            state.stopwatchLaps = [];
+            saveState();
+            renderStopwatchLaps();
+        }
+
+        function renderStopwatchLaps() {
+            const box = document.getElementById('stopwatch-laps-list');
+            if (!box) return;
+            if (!state.stopwatchLaps.length) {
+                box.innerHTML = '<p class="text-[11px] text-slate-500 text-center">لم يتم تسجيل مواقيت بعد.</p>';
+                return;
+            }
+            box.innerHTML = `
+                <div class="flex items-center justify-between text-[11px] text-slate-400 pb-1">
+                    <span>المواقيت المسجلة (${state.stopwatchLaps.length})</span>
+                    <button type="button" onclick="clearStopwatchLaps()" class="text-rose-300 hover:underline cursor-pointer">مسح</button>
+                </div>
+                ${state.stopwatchLaps.map(lp => `
+                    <div class="flex items-center justify-between px-3 py-1.5 rounded-xl bg-slate-900/75 text-xs tabular-nums">
+                        <span class="text-slate-400 font-bold">ميقات #${lp.lapNumber}</span>
+                        <span class="text-emerald-300 font-black">${escapeHtml(lp.timeText)}</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function applyPresetExamDate(isoDate, labelText) {
+            const dateInput = document.getElementById('exam-date-input');
+            const titleInput = document.getElementById('exam-title-input');
+            if (dateInput) dateInput.value = isoDate;
+            if (titleInput && labelText) titleInput.value = labelText;
+            updateExamCountdownBadge();
+            showToast(`تم اختيار الموعد: ${labelText}`, 'info');
+        }
+
+        function updateExamCountdownBadge() {
+            const pill = document.getElementById('exam-days-remaining-pill');
+            const dateInput = document.getElementById('exam-date-input');
+            if (!pill || !dateInput || !dateInput.value) return;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const examDate = new Date(dateInput.value + 'T00:00:00');
+            if (isNaN(examDate.getTime())) {
+                pill.textContent = 'المتبقي: -- يوم';
+                return;
+            }
+            const diffDays = Math.floor((examDate - today) / (1000 * 60 * 60 * 24));
+            if (diffDays > 0) {
+                pill.textContent = `المتبقي: ${diffDays} يوم`;
+                pill.className = 'px-3 py-2 rounded-2xl bg-emerald-500/15 border border-emerald-400/30 text-xs font-black text-emerald-300 tabular-nums';
+            } else if (diffDays === 0) {
+                pill.textContent = 'موعد الامتحان اليوم!';
+                pill.className = 'px-3 py-2 rounded-2xl bg-amber-500/20 border border-amber-400/40 text-xs font-black text-amber-200 tabular-nums';
+            } else {
+                pill.textContent = 'اختر تاريخاً قادماً';
+                pill.className = 'px-3 py-2 rounded-2xl bg-rose-500/15 border border-rose-400/30 text-xs font-black text-rose-300 tabular-nums';
+            }
+        }
+
+        function generateStudyReviewPlan() {
+            const title = document.getElementById('exam-title-input').value.trim() || 'الامتحان القادم';
+            const examDateStr = document.getElementById('exam-date-input').value;
+            const box = document.getElementById('exam-search-result');
+
+            if (!examDateStr) {
+                showToast('من فضلك اختر تاريخ الامتحان أولاً.', 'error');
+                return;
+            }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const examDate = new Date(examDateStr + 'T00:00:00');
+            const diffDays = Math.floor((examDate - today) / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 0) {
+                showToast('تاريخ الامتحان يجب أن يكون تاريخاً قادماً في المستقبل.', 'error');
+                return;
+            }
+
+            state.tasks = state.tasks.filter(t => !String(t.id || '').startsWith('tk-plan-') && !String(t.id || '').startsWith('tk-rev-'));
+
+            const step = Math.max(1, Math.floor(diffDays / Math.max(state.subjects.length * 2, 1)));
+            let addedCount = 0;
+
+            state.subjects.forEach((subj, idx) => {
+                const studyDay = new Date(today);
+                studyDay.setDate(today.getDate() + Math.min(diffDays - 1, idx * step));
+                const studyIso = studyDay.toISOString().slice(0, 10);
+
+                state.tasks.unshift({
+                    id: 'tk-plan-' + Date.now() + '-' + idx,
+                    subject: subj,
+                    title: `مذاكرة وتلخيص (${subj}) استعداداً لـ ${title}`,
+                    date: studyIso,
+                    reminder: '17:00',
+                    completed: false,
+                    lastAlerted: ''
+                });
+                addedCount++;
+
+                const revDay = new Date(examDate);
+                revDay.setDate(examDate.getDate() - Math.min(diffDays - 1, (state.subjects.length - idx)));
+                if (revDay > studyDay) {
+                    state.tasks.unshift({
+                        id: 'tk-rev-' + Date.now() + '-' + idx,
+                        subject: subj,
+                        title: `مراجعة نهائية وحل نماذج (${subj}) قبل ${title}`,
+                        date: revDay.toISOString().slice(0, 10),
+                        reminder: '19:30',
+                        completed: false,
+                        lastAlerted: ''
+                    });
+                    addedCount++;
+                }
+            });
+
+            saveState();
+            renderAll();
+
+            if (box) {
+                box.classList.remove('hidden');
+                box.innerHTML = `تم ترتيب <strong>${addedCount}</strong> جلسة مذاكرة ومراجعة موزعة حتى موعد <strong>${escapeHtml(title)}</strong> (${escapeHtml(examDateStr)}) وتحديث قائمة المهام دون تكرار.`;
+            }
+            showToast(`تم ترتيب وإضافة ${addedCount} جلسة مذاكرة ومراجعة.`, 'success');
+        }
+
+        function searchOfficialExamDate() {
+            const box = document.getElementById('exam-search-result');
+            if (!box) return;
+            box.classList.remove('hidden');
+            box.innerHTML = `<strong>المواعيد الرسمية المعتمدة للعام الدراسي 2026/2027:</strong><br>` +
+                OFFICIAL_FACTS_2026_2027.map(item => `• ${escapeHtml(item)}`).join('<br>');
+        }
+
+        function generateLocalAssistantReply(question) {
+            const q = question.toLowerCase();
+            const income = state.transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+            const expense = state.transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+            const balance = income - expense;
+            const pendingTasks = state.tasks.filter(t => !t.completed);
+
+            if (q.includes('ميزاني') || q.includes('مصروف') || q.includes('فلوس') || q.includes('دخل')) {
+                return `**ملخص ميزانيتك الحالية:**\n• إجمالي الدخل: **${income.toFixed(2)} ج.م**\n• إجمالي المصروفات: **${expense.toFixed(2)} ج.م**\n• الرصيد المتاح: **${balance.toFixed(2)} ج.م**\n• حد التنبيه: **${state.budgetLimit} ج.م**\n\n**نصيحة:** خصص نسبة ثابتة للطوارئ والكتب الدراسية، وراجع المصروفات المتكررة أسبوعياً.`;
+            }
+
+            if (q.includes('موعد') || q.includes('امتحان') || q.includes('2026') || q.includes('2027')) {
+                return `**المواعيد الرسمية المعتمدة للعام الدراسي 2026/2027:**\n` +
+                    OFFICIAL_FACTS_2026_2027.map(item => `• ${item}`).join('\n');
+            }
+
+            if (q.includes('جدول') || q.includes('مذاكر') || q.includes('مواد') || q.includes('خطة')) {
+                const days = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'];
+                const planLines = state.subjects.map((sub, i) => `• **${days[i % days.length]}:** جلسة تركيز 45 دقيقة لمادة **${sub}** + مراجعة سريعة.`);
+                return `**مقترح توزيع أسبوعي لموادك (${state.subjects.length} مواد) في ${state.stage}:**\n${planLines.join('\n')}\n\nلديك حالياً **${pendingTasks.length}** مهام مذاكرة غير مكتملة.`;
+            }
+
+            return `مرحباً يا **${state.studentName || 'بطل'}**! أنت مسجّل في **${state.stage}** ولديك **${state.subjects.length}** مواد و**${pendingTasks.length}** مهام قيد التنفيذ، ورصيدك المتاح **${balance.toFixed(2)} ج.م**.\nيمكنك سؤالي عن: **تحليل الميزانية**، **خطة مذاكرة لموادك**، أو **المواعيد الرسمية 2026/2027**.`;
+        }
+
+        function renderChatMessages() {
+            const box = document.getElementById('chat-messages');
+            if (!box) return;
+            box.innerHTML = state.chatHistory.map(msg => {
+                const isUser = msg.role === 'user';
+                return `
+                    <div class="flex ${isUser ? 'justify-start' : 'justify-end'}">
+                        <div class="max-w-[88%] sm:max-w-[78%] px-4 py-3 rounded-2xl text-xs sm:text-sm leading-relaxed ${isUser ? 'bg-indigo-600 text-white font-bold' : 'glass-subtle text-slate-100'}">
+                            ${formatSimpleMarkdown(msg.text)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function sendQuickPrompt(text) {
+            document.getElementById('chat-input').value = text;
+            handleSendChat(new Event('submit'));
+        }
+
+        function handleSendChat(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = '';
+            state.chatHistory.push({ role: 'user', text });
+            const reply = generateLocalAssistantReply(text);
+            state.chatHistory.push({ role: 'model', text: reply });
+            saveState();
+            renderChatMessages();
+        }
+
+        function handleAddSubject(e) {
+            e.preventDefault();
+            const input = document.getElementById('new-subject-input');
+            const name = input.value.trim();
+            if (!name) return;
+            if (state.subjects.includes(name)) {
+                showToast('هذه المادة موجودة بالفعل.', 'error');
+                return;
+            }
+            state.subjects.push(name);
+            input.value = '';
+            saveState();
+            renderAll();
+            showToast(`تمت إضافة مادة "${name}".`, 'success');
+        }
+
+        function editSubject(index) {
+            const currentName = state.subjects[index];
+            if (!currentName) return;
+            const updated = prompt('تعديل اسم المادة:', currentName);
+            if (!updated || !updated.trim()) return;
+            const clean = updated.trim();
+            state.subjects[index] = clean;
+
+            state.lessons.forEach(l => { if (l.subject === currentName) l.subject = clean; });
+            state.tasks.forEach(t => { if (t.subject === currentName) t.subject = clean; });
+            if (currentLessonSubjectFilter === currentName) currentLessonSubjectFilter = clean;
+            if (currentTaskSubjectFilter === currentName) currentTaskSubjectFilter = clean;
+
+            saveState();
+            renderAll();
+            showToast('تم تعديل اسم المادة وتحديث الجداول.', 'success');
+        }
+
+        function deleteSubject(index) {
+            if (state.subjects.length <= 1) {
+                showToast('يجب الإبقاء على مادة واحدة على الأقل.', 'error');
+                return;
+            }
+            const removed = state.subjects[index];
+            state.subjects.splice(index, 1);
+            if (currentLessonSubjectFilter === removed) currentLessonSubjectFilter = 'الكل';
+            if (currentTaskSubjectFilter === removed) currentTaskSubjectFilter = 'الكل';
+            saveState();
+            renderAll();
+            showToast(`تم حذف مادة "${removed}".`, 'info');
+        }
+
+        function renderSubjectsManagement() {
+            const list = document.getElementById('subjects-management-list');
+            if (!list) return;
+            list.innerHTML = state.subjects.map((subj, idx) => `
+                <div class="flex items-center justify-between gap-2 p-3 rounded-2xl glass-subtle">
+                    <span class="text-xs sm:text-sm font-extrabold text-white">${escapeHtml(subj)}</span>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="editSubject(${idx})" class="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-indigo-500/20 text-indigo-300 text-xs font-bold transition cursor-pointer">تعديل</button>
+                        <button type="button" onclick="deleteSubject(${idx})" class="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-rose-500/20 text-rose-300 text-xs font-bold transition cursor-pointer">حذف</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function saveStudentNameFromSettings() {
+            const val = document.getElementById('settings-student-name').value.trim();
+            if (!val) {
+                showToast('من فضلك أدخل اسم الطالب.', 'error');
+                return;
+            }
+            state.studentName = val;
+            saveState();
+            renderAll();
+            showToast('تم حفظ اسم الطالب.', 'success');
+        }
+
+        function saveBudgetLimitFromSettings() {
+            const limit = parseFloat(document.getElementById('settings-budget-limit').value);
+            if (isNaN(limit) || limit < 0) {
+                showToast('من فضلك أدخل حداً صحيحاً للميزانية.', 'error');
+                return;
+            }
+            state.budgetLimit = limit;
+            saveState();
+            renderStats();
+            showToast('تم تحديث حد تنبيه الميزانية.', 'success');
+        }
+
+        function exportBackupJSON() {
+            const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `rafiqy-backup-${getTodayISO()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('تم تصدير النسخة الاحتياطية.', 'success');
+        }
+
+        function importBackupJSON(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const parsed = JSON.parse(String(reader.result || '{}'));
+                    const def = createDefaultState();
+                    state = {
+                        ...def,
+                        ...parsed,
+                        subjects: Array.isArray(parsed.subjects) && parsed.subjects.length ? parsed.subjects : [...DEFAULT_SUBJECTS],
+                        transactions: Array.isArray(parsed.transactions) ? parsed.transactions : [],
+                        lessons: Array.isArray(parsed.lessons) ? parsed.lessons : [],
+                        tasks: Array.isArray(parsed.tasks) ? parsed.tasks : [],
+                        notes: Array.isArray(parsed.notes) ? parsed.notes : def.notes,
+                        alarms: Array.isArray(parsed.alarms) ? parsed.alarms : def.alarms,
+                        stopwatchLaps: Array.isArray(parsed.stopwatchLaps) ? parsed.stopwatchLaps : [],
+                        chatHistory: Array.isArray(parsed.chatHistory) && parsed.chatHistory.length ? parsed.chatHistory : def.chatHistory
+                    };
+                    saveState();
+                    renderAll();
+                    showToast('تم استيراد النسخة الاحتياطية بنجاح.', 'success');
+                } catch (_) {
+                    showToast('ملف النسخة الاحتياطية غير صالح.', 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function resetAllData() {
+            const box = document.getElementById('reset-confirm-box');
+            if (box) {
+                box.classList.remove('hidden');
+                return;
+            }
+            confirmResetAllData();
+        }
+
+        function cancelResetAllData() {
+            const box = document.getElementById('reset-confirm-box');
+            if (box) box.classList.add('hidden');
+        }
+
+        function confirmResetAllData() {
+            cancelResetAllData();
+            localStorage.removeItem(STORAGE_KEY);
+            state = createDefaultState();
+            saveState();
+            renderAll();
+            openStudentLoginModal();
+            showToast('تمت إعادة ضبط التطبيق بالكامل.', 'info');
+        }
+
+        function checkReminders() {
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            const currentHM = `${hh}:${mm}`;
+            const todayIso = getTodayISO();
+
+            state.tasks.forEach(t => {
+                if (!t.completed && t.date === todayIso && t.reminder === currentHM && t.lastAlerted !== currentHM) {
+                    t.lastAlerted = currentHM;
+                    saveState();
+                    playAlertTone();
+                    showToast(`تنبيه مذاكرة (${t.subject}): ${t.title}`, 'info');
+                }
+            });
+
+            state.alarms.forEach(a => {
+                if (a.enabled && a.time === currentHM && a.lastTriggered !== currentHM) {
+                    a.lastTriggered = currentHM;
+                    saveState();
+                    playAlertTone();
+                    showToast(`منبه (${a.time}): ${a.label}`, 'info');
+                }
+            });
+        }
+
+        function escapeHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function escapeAttr(str) {
+            return String(str || '').replace(/"/g, '&quot;');
+        }
+
+        function formatSimpleMarkdown(text) {
+            return escapeHtml(text)
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function renderAll() {
+            const displayName = state.studentName && state.studentName.trim() ? state.studentName.trim() : 'محمد أيمن';
+            const activeStage = STAGE_PRESETS[state.stage] ? state.stage : 'المرحلة الثانوية';
+            document.getElementById('header-student-greeting').textContent = `مرحباً بك يا ${displayName}`;
+            const stageBadge = document.getElementById('header-stage-badge');
+            if (stageBadge) stageBadge.textContent = `${activeStage} • ${state.subjects.length} ${state.subjects.length === 1 ? 'مادة' : 'مواد'} • 2026/2027`;
+            document.getElementById('settings-student-name').value = state.studentName || '';
+            const settingsStage = document.getElementById('settings-stage-select');
+            if (settingsStage) settingsStage.value = activeStage;
+            const settingsCount = document.getElementById('settings-subjects-count');
+            if (settingsCount) settingsCount.value = state.subjects.length;
+            document.getElementById('settings-budget-limit').value = state.budgetLimit ?? 1500;
+            syncStageLoginLabels(activeStage, state.subjects.length);
+
+            populateSubjectSelects();
+            renderStats();
+            renderTransactions();
+            renderSubjectsProgress();
+            renderLessons();
+            renderTasks();
+            renderCalendarAndNotes();
+            renderAlarmsList();
+            updateExamCountdownBadge();
+            updateCountdownUI();
+            updateStopwatchUI();
+            renderStopwatchLaps();
+            renderChatMessages();
+            renderSubjectsManagement();
+            lucide.createIcons();
+        }
+
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const todayIso = getTodayISO();
+            document.getElementById('tx-date').value = todayIso;
+            document.getElementById('task-date').value = todayIso;
+            selectedCalendarDateStr = todayIso;
+            const [ty, tm] = todayIso.split('-').map(Number);
+            if (ty && tm) calendarViewDate = new Date(ty, tm - 1, 1);
+
+            document.getElementById('login-student-name-input')?.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    submitStudentLogin();
+                }
+            });
+
+            updateNetworkStatus();
+            updateLiveClock();
+            setInterval(updateLiveClock, 1000);
+            setInterval(checkReminders, 20000);
+
+            renderAll();
+
+            if (!state.studentName || !state.studentName.trim()) {
+                openStudentLoginModal();
+            }
+        });
+    </script>
+</body>
+</html>
